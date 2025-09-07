@@ -21,14 +21,22 @@ const FastCard: React.FC<FastCardProps> = ({
   onCompleted,
   onClear,
 }) => {
-  const balance = completed - missed; // Balance calculation
+  // Balance calculation (missed - completed)
+  const balance = missed - completed;
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{type}</Text>
+      <Text style={styles.title}>{String(type)}</Text>
       <Text style={styles.stats}>Missed: {missed}</Text>
       <Text style={styles.stats}>Completed: {completed}</Text>
-      <Text style={styles.balance}>Balance: {balance}</Text> {/* Display balance */}
+      <Text style={styles.balance}>
+        Balance:{" "}
+        {balance > 0
+          ? `-${balance}` // still pending
+          : balance === 0
+          ? "0" // all done
+          : `+${Math.abs(balance)}`} {/* extra completed */}
+      </Text>
       <View style={styles.buttonContainer}>
         <Button title="Missed" onPress={onMissed} color="#e74c3c" />
         <Button title="Completed" onPress={onCompleted} color="#2ecc71" />
