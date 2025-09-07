@@ -1,5 +1,7 @@
-package com.prayertracker
+package com.salahudheen.prayertracker
 
+import android.os.Bundle; 
+import org.devio.rn.splashscreen.SplashScreen; 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -12,6 +14,10 @@ class MainActivity : ReactActivity() {
    * rendering of the component.
    */
   override fun getMainComponentName(): String = "PrayerTracker"
+        override fun onCreate(savedInstanceState: Bundle?) {
+    SplashScreen.show(this)  // here
+    super.onCreate(savedInstanceState)
+}
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]

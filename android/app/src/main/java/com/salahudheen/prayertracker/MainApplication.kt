@@ -1,4 +1,4 @@
-package com.prayertracker
+package com.salahudheen.prayertracker
 
 import android.app.Application
 import com.facebook.react.PackageList
