@@ -1,3 +1,4 @@
+// App.tsx
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView, FlatList, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
