@@ -1,4 +1,3 @@
-// HomeScreen.tsx
 import React from "react";
 import {
   View,
@@ -18,6 +17,9 @@ type RootStackParamList = {
   FastTracker: undefined;
   AssetReceivable: undefined;
   LiabilityPayable: undefined;
+  Zakat: undefined;
+  HajjTracker: undefined;
+  UmrahTracker: undefined; // ✅ Add UmrahTracker
 };
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -29,7 +31,7 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-// Gradient Button with press animation (text only)
+// Gradient Button (square style)
 const GradientButton = ({
   onPress,
   colors,
@@ -42,10 +44,7 @@ const GradientButton = ({
   const scale = new Animated.Value(1);
 
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
+    Animated.spring(scale, { toValue: 0.95, useNativeDriver: true }).start();
   };
 
   const handlePressOut = () => {
@@ -62,11 +61,11 @@ const GradientButton = ({
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={{ width: "100%", alignItems: "center" }}
+      style={{ margin: 12 }}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
-        <LinearGradient colors={colors} style={styles.button}>
-          <Text style={styles.buttonText}>{title}</Text>
+        <LinearGradient colors={colors} style={styles.squareButton}>
+          <Text style={styles.squareButtonText}>{title}</Text>
         </LinearGradient>
       </Animated.View>
     </Pressable>
@@ -76,34 +75,50 @@ const GradientButton = ({
 export default function HomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f6fa" />
-      <Text style={styles.header}>Islamic Tracker</Text>
+      <StatusBar barStyle="light-content" backgroundColor="#6c5ce7" />
 
-      <View style={styles.buttonContainer}>
+      {/* Top Gradient Bar with Heading */}
+      <LinearGradient colors={["#6c5ce7", "#341f97"]} style={styles.topBar}>
+        <Text style={styles.header}>Islamic Tracker</Text>
+      </LinearGradient>
+
+      {/* Buttons */}
+      <View style={styles.buttonGrid}>
         <GradientButton
           onPress={() => navigation.navigate("PrayerTracker")}
           colors={["#6c5ce7", "#341f97"]}
-          title="Prayer Tracker"
+          title="Prayer"
         />
-
         <GradientButton
           onPress={() => navigation.navigate("FastTracker")}
           colors={["#00b894", "#019267"]}
-          title="Fast Tracker"
+          title="Fast"
         />
-
-        {/* New Asset/Receivable Button */}
         <GradientButton
           onPress={() => navigation.navigate("AssetReceivable")}
           colors={["#fdcb6e", "#e17055"]}
-          title="Asset / Receivable"
+          title="Assets"
         />
-
-        {/* New Liability/Payable Button */}
         <GradientButton
           onPress={() => navigation.navigate("LiabilityPayable")}
           colors={["#d63031", "#e84393"]}
-          title="Liability / Payable"
+          title="Liabilities"
+        />
+        <GradientButton
+          onPress={() => navigation.navigate("Zakat")}
+          colors={["#0984e3", "#74b9ff"]}
+          title="Zakat"
+        />
+        <GradientButton
+          onPress={() => navigation.navigate("HajjTracker")}
+          colors={["#f39c12", "#e67e22"]}
+          title="Hajj Tracker"
+        />
+        {/* ✅ Umrah Tracker Button */}
+        <GradientButton
+          onPress={() => navigation.navigate("UmrahTracker")}
+          colors={["#8e44ad", "#9b59b6"]}
+          title="Umrah Tracker"
         />
       </View>
     </SafeAreaView>
@@ -113,37 +128,46 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f6fa",
+    alignItems: "center",
+  },
+  topBar: {
+    width: "100%",
+    paddingVertical: 35,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f6fa",
-    paddingHorizontal: 16,
+    elevation: 8,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   header: {
-    fontSize: 34,
+    fontSize: 26,
     fontWeight: "bold",
-    color: "#2d3436",
-    marginBottom: 60,
-    textAlign: "center",
-  },
-  buttonContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  button: {
-    justifyContent: "center",
-    width: 280,
-    height: 60,
-    borderRadius: 50,
-    marginVertical: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  buttonText: {
     color: "#fff",
-    fontSize: 20,
+    textAlign: "center",
+    letterSpacing: 1,
+  },
+  buttonGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: 40,
+  },
+  squareButton: {
+    width: 110,
+    height: 110,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  squareButtonText: {
+    color: "#fff",
+    fontSize: 14,
     fontWeight: "700",
     textAlign: "center",
   },

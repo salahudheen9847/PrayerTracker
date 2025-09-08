@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, ScrollView, FlatList, Text, TouchableOpacity } from "react-native";
+import { ScrollView, FlatList, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LinearGradient from "react-native-linear-gradient";
 import { styles } from "../styles";
 import FastCard from "../components/FastCard";
 import HistoryList from "../components/HistoryList";
@@ -48,20 +50,17 @@ export default function FastTracker() {
 
         let updated = { ...f };
         if (status === "missed") updated.missed += 1;
-        else if (status === "completed" && updated.completed < updated.missed) updated.completed += 1;
+        else if (status === "completed" && updated.completed < updated.missed)
+          updated.completed += 1;
 
-        const balance = updated.completed - updated.missed;
-
-        if (balance !== 0) {
-          setHistory((prevHistory) => [
-            ...prevHistory,
-            {
-              date: new Date().toLocaleDateString(),
-              name: name + " Fast",
-              status: status === "missed" ? "Missed" : "Completed",
-            },
-          ]);
-        }
+        setHistory((prevHistory) => [
+          ...prevHistory,
+          {
+            date: new Date().toLocaleDateString(),
+            name: name + " Fast",
+            status: status === "missed" ? "Missed" : "Completed",
+          },
+        ]);
 
         return updated;
       })
@@ -77,14 +76,15 @@ export default function FastTracker() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Big Bold Arrow Only */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 40, fontWeight: "bold", color: "#0984e3" }}>←</Text>
+      {/* 🔹 Top Bar */}
+      <LinearGradient colors={["#00b894", "#019267"]} style={localStyles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={localStyles.backButton}>
+          <Text style={localStyles.backArrow}>←</Text>
         </TouchableOpacity>
+        <Text style={localStyles.topBarText}>Fast Tracker</Text>
+      </LinearGradient>
 
-        <Text style={styles.header}>Fast Tracker</Text>
-
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
         <FlatList
           data={fasts}
           renderItem={({ item }) => (
@@ -109,3 +109,33 @@ export default function FastTracker() {
     </SafeAreaView>
   );
 }
+
+// 🔹 Local styles for professional look
+const localStyles = StyleSheet.create({
+  topBar: {
+    width: "100%",
+    paddingVertical: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 6,
+    marginBottom: 12,
+    flexDirection: "row",
+  },
+  topBarText: {
+    fontSize: 29,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+  },
+  backButton: {
+    position: "absolute",
+    left: 20,
+    justifyContent: "center",
+    height: "100%",
+  },
+  backArrow: {
+    fontSize: 38,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+});

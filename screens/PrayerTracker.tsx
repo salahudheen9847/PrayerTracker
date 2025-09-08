@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, ScrollView, FlatList, Text, TouchableOpacity } from "react-native";
+import { ScrollView, FlatList, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import LinearGradient from "react-native-linear-gradient";
 import { styles } from "../styles";
 import PrayerCard from "../components/PrayerCard";
 import HistoryList from "../components/HistoryList";
@@ -77,14 +79,15 @@ export default function PrayerTracker() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Bigger Bold Arrow Only */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 40, fontWeight: "bold", color: "#0984e3" }}>←</Text>
+      {/* 🔹 Top Bar */}
+      <LinearGradient colors={["#00b894", "#019267"]} style={localStyles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={localStyles.backButton}>
+          <Text style={localStyles.backArrow}>←</Text>
         </TouchableOpacity>
+        <Text style={localStyles.topBarText}>Prayer Tracker</Text>
+      </LinearGradient>
 
-        <Text style={styles.header}>Prayer Tracker</Text>
-
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
         <FlatList
           data={prayers}
           renderItem={({ item }) => (
@@ -109,3 +112,33 @@ export default function PrayerTracker() {
     </SafeAreaView>
   );
 }
+
+// 🔹 Local styles for professional look
+const localStyles = StyleSheet.create({
+  topBar: {
+    width: "100%",
+    paddingVertical: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 6,
+    marginBottom: 12,
+    flexDirection: "row",
+  },
+  topBarText: {
+    fontSize: 29,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+  },
+  backButton: {
+    position: "absolute",
+    left: 20,
+    justifyContent: "center",
+    height: "100%",
+  },
+  backArrow: {
+    fontSize: 38,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+});

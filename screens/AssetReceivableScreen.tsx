@@ -39,7 +39,6 @@ export default function AssetReceivableScreen() {
 
   // Add or update item
   const addItem = () => {
-    // Convert amount to number if exists, else undefined
     const parsedAmount = amount ? parseFloat(amount) : undefined;
     const newItem: FinanceItem = { name: name || undefined, amount: parsedAmount };
 
@@ -54,7 +53,6 @@ export default function AssetReceivableScreen() {
 
     setItems(updatedItems);
     saveItems(updatedItems);
-
     setName("");
     setAmount("");
   };
@@ -107,12 +105,14 @@ export default function AssetReceivableScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* 🔹 Top Bar Back Arrow */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Text style={styles.backArrow}>←</Text>
       </TouchableOpacity>
 
       <Text style={styles.header}>Asset & Receivable</Text>
 
+      {/* 🔹 Input Section */}
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Name"
@@ -132,9 +132,10 @@ export default function AssetReceivableScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* 🔹 List of Items */}
       <FlatList
         data={items}
-        keyExtractor={(_, index) => `item-${index}`} // Unique key with index
+        keyExtractor={(_, index) => `item-${index}`}
         renderItem={renderItem}
         ListFooterComponent={<DonationBox />}
         ListFooterComponentStyle={{ marginTop: 20 }}
@@ -144,20 +145,44 @@ export default function AssetReceivableScreen() {
   );
 }
 
+// 🔹 Professional Styles
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f5f6fa", paddingHorizontal: 16 },
   backButton: { marginBottom: 16, padding: 6, alignSelf: "flex-start" },
-  backArrow: { fontSize: 40, fontWeight: "bold", color: "#0984e3" },
+  backArrow: { fontSize: 38, fontWeight: "900", color: "#00b894" }, // big, bold, green
   header: { fontSize: 28, fontWeight: "bold", marginBottom: 20, textAlign: "center", color: "#2d3436" },
   inputContainer: { flexDirection: "row", marginBottom: 20, alignItems: "center" },
-  input: { flex: 1, borderWidth: 1, borderColor: "#ccc", padding: 10, marginRight: 8, borderRadius: 10, backgroundColor: "#fff", elevation: 2 },
-  addButton: { paddingHorizontal: 16, paddingVertical: 10, backgroundColor: "#0984e3", borderRadius: 10, elevation: 3 },
+  input: { 
+    flex: 1, 
+    borderWidth: 1, 
+    borderColor: "#ccc", 
+    padding: 12, 
+    marginRight: 8, 
+    borderRadius: 12, 
+    backgroundColor: "#fff", 
+    elevation: 3 
+  },
+  addButton: { 
+    paddingHorizontal: 16, 
+    paddingVertical: 12, 
+    backgroundColor: "#00b894", 
+    borderRadius: 12, 
+    elevation: 3 
+  },
   addBtnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
-  itemCard: { flexDirection: "row", justifyContent: "space-between", padding: 16, backgroundColor: "#fff", marginBottom: 12, borderRadius: 12, elevation: 4 },
+  itemCard: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    padding: 16, 
+    backgroundColor: "#fff", 
+    marginBottom: 14, 
+    borderRadius: 14, 
+    elevation: 4 
+  },
   itemName: { fontWeight: "600", fontSize: 16, color: "#2d3436" },
   itemAmount: { fontSize: 15, color: "#636e72", marginTop: 2 },
   itemButtons: { flexDirection: "row" },
-  editButton: { paddingHorizontal: 14, paddingVertical: 6, backgroundColor: "#fdcb6e", borderRadius: 8, marginRight: 8 },
-  deleteButton: { paddingHorizontal: 14, paddingVertical: 6, backgroundColor: "#d63031", borderRadius: 8 },
+  editButton: { paddingHorizontal: 14, paddingVertical: 8, backgroundColor: "#fdcb6e", borderRadius: 10, marginRight: 8 },
+  deleteButton: { paddingHorizontal: 14, paddingVertical: 8, backgroundColor: "#d63031", borderRadius: 10 },
   btnText: { color: "#fff", fontWeight: "600" },
 });
