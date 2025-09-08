@@ -1,17 +1,23 @@
+// HomeScreen.tsx
 import React from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  StatusBar,
+  Animated,
+  Pressable,
 } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type RootStackParamList = {
   Home: undefined;
   PrayerTracker: undefined;
   FastTracker: undefined;
+  AssetReceivable: undefined;
+  LiabilityPayable: undefined;
 };
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -23,24 +29,83 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
+// Gradient Button with press animation (text only)
+const GradientButton = ({
+  onPress,
+  colors,
+  title,
+}: {
+  onPress: () => void;
+  colors: string[];
+  title: string;
+}) => {
+  const scale = new Animated.Value(1);
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      friction: 3,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={{ width: "100%", alignItems: "center" }}
+    >
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <LinearGradient colors={colors} style={styles.button}>
+          <Text style={styles.buttonText}>{title}</Text>
+        </LinearGradient>
+      </Animated.View>
+    </Pressable>
+  );
+};
+
 export default function HomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f5f6fa" />
       <Text style={styles.header}>Islamic Tracker</Text>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#6c5ce7" }]}
-        onPress={() => navigation.navigate("PrayerTracker")}
-      >
-        <Text style={styles.buttonText}>Prayer Tracker</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <GradientButton
+          onPress={() => navigation.navigate("PrayerTracker")}
+          colors={["#6c5ce7", "#341f97"]}
+          title="Prayer Tracker"
+        />
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#00b894" }]}
-        onPress={() => navigation.navigate("FastTracker")}
-      >
-        <Text style={styles.buttonText}>Fast Tracker</Text>
-      </TouchableOpacity>
+        <GradientButton
+          onPress={() => navigation.navigate("FastTracker")}
+          colors={["#00b894", "#019267"]}
+          title="Fast Tracker"
+        />
+
+        {/* New Asset/Receivable Button */}
+        <GradientButton
+          onPress={() => navigation.navigate("AssetReceivable")}
+          colors={["#fdcb6e", "#e17055"]}
+          title="Asset / Receivable"
+        />
+
+        {/* New Liability/Payable Button */}
+        <GradientButton
+          onPress={() => navigation.navigate("LiabilityPayable")}
+          colors={["#d63031", "#e84393"]}
+          title="Liability / Payable"
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -51,29 +116,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f5f6fa",
-    padding: 16,
+    paddingHorizontal: 16,
   },
   header: {
-    fontSize: 28,
+    fontSize: 34,
     fontWeight: "bold",
-    marginBottom: 60,
     color: "#2d3436",
+    marginBottom: 60,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    width: "100%",
+    alignItems: "center",
   },
   button: {
-    width: 260,          // bigger width
-    paddingVertical: 22, // bigger height
-    borderRadius: 60,    // more round
-    alignItems: "center",
-    marginVertical: 16,
+    justifyContent: "center",
+    width: 280,
+    height: 60,
+    borderRadius: 50,
+    marginVertical: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonText: {
     color: "#fff",
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "700",
+    textAlign: "center",
   },
 });

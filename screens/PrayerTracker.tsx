@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView, FlatList, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "../styles";
 import PrayerCard from "../components/PrayerCard";
 import HistoryList from "../components/HistoryList";
@@ -19,10 +20,26 @@ export default function PrayerTracker() {
     { name: "Maghrib", missed: 0, completed: 0 },
     { name: "Isha", missed: 0, completed: 0 },
   ]);
-
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  useEffect(() => { SplashScreen.hide(); }, []);
+  useEffect(() => {
+    SplashScreen.hide();
+    (async () => {
+      try {
+        const savedPrayers = await AsyncStorage.getItem("prayers");
+        const savedHistory = await AsyncStorage.getItem("history");
+        if (savedPrayers) setPrayers(JSON.parse(savedPrayers));
+        if (savedHistory) setHistory(JSON.parse(savedHistory));
+      } catch (err) {
+        console.log("Error loading data:", err);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem("prayers", JSON.stringify(prayers));
+    AsyncStorage.setItem("history", JSON.stringify(history));
+  }, [prayers, history]);
 
   const updateTracker = (name: string, status: "missed" | "completed") => {
     setPrayers((prev) =>
@@ -35,7 +52,6 @@ export default function PrayerTracker() {
 
         const balance = updated.completed - updated.missed;
 
-        // Only add to history if balance is not zero
         if (balance !== 0) {
           setHistory((prevHistory) => [
             ...prevHistory,
@@ -56,23 +72,15 @@ export default function PrayerTracker() {
     setPrayers((prev) =>
       prev.map((p) => (p.name === name ? { ...p, missed: 0, completed: 0 } : p))
     );
+    setHistory((prev) => prev.filter((h) => h.name !== name));
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Back Button */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{
-            marginBottom: 16,
-            padding: 14,
-            backgroundColor: "#0984e3",
-            borderRadius: 50,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>← Back</Text>
+        {/* Bigger Bold Arrow Only */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 16 }}>
+          <Text style={{ fontSize: 40, fontWeight: "bold", color: "#0984e3" }}>←</Text>
         </TouchableOpacity>
 
         <Text style={styles.header}>Prayer Tracker</Text>

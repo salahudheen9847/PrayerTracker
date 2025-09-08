@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView, FlatList, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "../styles";
 import FastCard from "../components/FastCard";
 import HistoryList from "../components/HistoryList";
@@ -19,7 +20,26 @@ export default function FastTracker() {
 
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  useEffect(() => { SplashScreen.hide(); }, []);
+  // Load saved data
+  useEffect(() => {
+    SplashScreen.hide();
+    (async () => {
+      try {
+        const savedFasts = await AsyncStorage.getItem("fasts");
+        const savedHistory = await AsyncStorage.getItem("fastHistory");
+        if (savedFasts) setFasts(JSON.parse(savedFasts));
+        if (savedHistory) setHistory(JSON.parse(savedHistory));
+      } catch (err) {
+        console.log("Error loading data:", err);
+      }
+    })();
+  }, []);
+
+  // Save whenever fasts or history change
+  useEffect(() => {
+    AsyncStorage.setItem("fasts", JSON.stringify(fasts));
+    AsyncStorage.setItem("fastHistory", JSON.stringify(history));
+  }, [fasts, history]);
 
   const updateTracker = (name: string, status: "missed" | "completed") => {
     setFasts((prev) =>
@@ -32,7 +52,6 @@ export default function FastTracker() {
 
         const balance = updated.completed - updated.missed;
 
-        // Only add to history if balance is not zero
         if (balance !== 0) {
           setHistory((prevHistory) => [
             ...prevHistory,
@@ -53,23 +72,15 @@ export default function FastTracker() {
     setFasts((prev) =>
       prev.map((f) => (f.type === name ? { ...f, missed: 0, completed: 0 } : f))
     );
+    setHistory((prev) => prev.filter((h) => !h.name.startsWith(name)));
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Back Button */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{
-            marginBottom: 16,
-            padding: 14,
-            backgroundColor: "#0984e3",
-            borderRadius: 50,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>← Back</Text>
+        {/* Big Bold Arrow Only */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 16 }}>
+          <Text style={{ fontSize: 40, fontWeight: "bold", color: "#0984e3" }}>←</Text>
         </TouchableOpacity>
 
         <Text style={styles.header}>Fast Tracker</Text>
