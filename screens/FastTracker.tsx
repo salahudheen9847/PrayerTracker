@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LinearGradient from "react-native-linear-gradient";
-import { styles } from "../styles";
+import Icon from "react-native-vector-icons/FontAwesome5"; // ✅ Back arrow icon
 import FastCard from "../components/FastCard";
 import HistoryList from "../components/HistoryList";
 import DonationBox from "../components/DonationBox";
@@ -37,30 +37,32 @@ export default function FastTracker() {
     })();
   }, []);
 
-  // Save whenever fasts or history change
+  // Save data on change
   useEffect(() => {
-    AsyncStorage.setItem("fasts", JSON.stringify(fasts));
-    AsyncStorage.setItem("fastHistory", JSON.stringify(history));
+    AsyncStorage.setItem("fasts", JSON.stringify(fasts)).catch(console.error);
+    AsyncStorage.setItem("fastHistory", JSON.stringify(history)).catch(console.error);
   }, [fasts, history]);
 
+  // Update tracker
   const updateTracker = (name: string, status: "missed" | "completed") => {
     setFasts((prev) =>
       prev.map((f) => {
         if (f.type !== name) return f;
-
         let updated = { ...f };
-        if (status === "missed") updated.missed += 1;
-        else if (status === "completed" && updated.completed < updated.missed)
-          updated.completed += 1;
 
-        setHistory((prevHistory) => [
-          ...prevHistory,
-          {
-            date: new Date().toLocaleDateString(),
-            name: name + " Fast",
-            status: status === "missed" ? "Missed" : "Completed",
-          },
-        ]);
+        if (status === "missed") {
+          updated.missed += 1;
+          setHistory((prevHistory) => [
+            ...prevHistory,
+            { date: new Date().toLocaleDateString(), name: name + " Fast", status: "Missed" },
+          ]);
+        } else if (status === "completed" && updated.completed < updated.missed) {
+          updated.completed += 1;
+          setHistory((prevHistory) => [
+            ...prevHistory,
+            { date: new Date().toLocaleDateString(), name: name + " Fast", status: "Completed" },
+          ]);
+        }
 
         return updated;
       })
@@ -75,11 +77,11 @@ export default function FastTracker() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* 🔹 Top Bar */}
+    <SafeAreaView style={localStyles.container}>
+      {/* Top Bar */}
       <LinearGradient colors={["#00b894", "#019267"]} style={localStyles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={localStyles.backButton}>
-          <Text style={localStyles.backArrow}>←</Text>
+          <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={localStyles.topBarText}>Fast Tracker</Text>
       </LinearGradient>
@@ -103,23 +105,26 @@ export default function FastTracker() {
         />
 
         <HistoryList history={history} />
-
         <DonationBox />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// 🔹 Local styles for professional look
+// 🔹 Local styles
 const localStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#E0F7FA", // ✅ Light cyan background
+  },
   topBar: {
     width: "100%",
     paddingVertical: 18,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     elevation: 6,
     marginBottom: 12,
-    flexDirection: "row",
   },
   topBarText: {
     fontSize: 29,
@@ -132,10 +137,5 @@ const localStyles = StyleSheet.create({
     left: 20,
     justifyContent: "center",
     height: "100%",
-  },
-  backArrow: {
-    fontSize: 38,
-    fontWeight: "bold",
-    color: "#fff",
   },
 });

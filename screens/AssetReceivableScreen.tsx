@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome5"; // ✅ Back arrow icon
 import DonationBox from "../components/DonationBox";
 
 type FinanceItem = { name?: string; amount?: number };
@@ -107,7 +108,7 @@ export default function AssetReceivableScreen() {
     <SafeAreaView style={styles.container}>
       {/* 🔹 Top Bar Back Arrow */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backArrow}>←</Text>
+        <Icon name="arrow-left" size={28} color="#00b894" />
       </TouchableOpacity>
 
       <Text style={styles.header}>Asset & Receivable</Text>
@@ -147,9 +148,8 @@ export default function AssetReceivableScreen() {
 
 // 🔹 Professional Styles
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f6fa", paddingHorizontal: 16 },
+  container: { flex: 1, backgroundColor: "#E0F7FA", paddingHorizontal: 16 }, // ✅ Light cyan background
   backButton: { marginBottom: 16, padding: 6, alignSelf: "flex-start" },
-  backArrow: { fontSize: 38, fontWeight: "900", color: "#00b894" }, // big, bold, green
   header: { fontSize: 28, fontWeight: "bold", marginBottom: 20, textAlign: "center", color: "#2d3436" },
   inputContainer: { flexDirection: "row", marginBottom: 20, alignItems: "center" },
   input: { 

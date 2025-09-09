@@ -1,3 +1,4 @@
+// HajjTrackerScreen.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -11,21 +12,17 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Progress from 'react-native-progress';
-
-// ✅ Import DonationBox
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/FontAwesome5'; // ✅ back arrow
 import DonationBox from '../components/DonationBox';
 
 export default function HajjTrackerScreen({ navigation }: any) {
-  // ---------- Notes ----------
   const [note, setNote] = useState<string>('');
   const [notes, setNotes] = useState<string[]>([]);
-
-  // ---------- Hajj Savings ----------
   const [target, setTarget] = useState<string>('10000');
   const [saved, setSaved] = useState<string>('0');
   const [input, setInput] = useState<string>('');
 
-  // ---------- Load Data ----------
   useEffect(() => {
     loadData();
   }, []);
@@ -45,7 +42,6 @@ export default function HajjTrackerScreen({ navigation }: any) {
     }
   };
 
-  // ---------- Notes Functions ----------
   const addNote = async () => {
     if (note.trim() === '') return;
     const newNotes = [...notes, note];
@@ -59,7 +55,6 @@ export default function HajjTrackerScreen({ navigation }: any) {
     await AsyncStorage.removeItem('notes');
   };
 
-  // ---------- Savings Functions ----------
   const addSavings = async () => {
     if (input.trim() === '' || isNaN(Number(input)) || Number(input) <= 0) {
       Alert.alert('Invalid Input', 'Enter a valid positive number.');
@@ -85,20 +80,21 @@ export default function HajjTrackerScreen({ navigation }: any) {
     await AsyncStorage.setItem('hajj_saved', '0');
   };
 
-  // ---------- Progress ----------
   const progress = Math.min(Number(saved) / Number(target), 1);
 
   return (
     <ScrollView style={styles.container}>
-      {/* ---------- Back Button ---------- */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backText}>← Back</Text>
-      </TouchableOpacity>
+      {/* 🔹 Gradient Top Bar */}
+      <LinearGradient colors={['#0984e3', '#74b9ff']} style={styles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.topBarText}>Hajj Tracker</Text>
+      </LinearGradient>
 
       {/* ---------- Hajj Savings ---------- */}
       <Text style={styles.sectionTitle}>Hajj Savings</Text>
 
-      {/* Target Amount Input */}
       <TextInput
         style={styles.input}
         placeholder="Enter target amount"
@@ -108,7 +104,6 @@ export default function HajjTrackerScreen({ navigation }: any) {
       />
       <Button title="Update Target" onPress={updateTarget} />
 
-      {/* Progress Bar */}
       <View style={{ marginVertical: 15 }}>
         <Progress.Bar
           progress={progress}
@@ -122,7 +117,6 @@ export default function HajjTrackerScreen({ navigation }: any) {
         <Text style={styles.progressText}>{(progress * 100).toFixed(2)}%</Text>
       </View>
 
-      {/* Current Saved & Remaining */}
       <View style={styles.box}>
         <Text>Current Saved:</Text>
         <Text>{saved}</Text>
@@ -132,7 +126,6 @@ export default function HajjTrackerScreen({ navigation }: any) {
         <Text>{Math.max(Number(target) - Number(saved), 0).toFixed(2)}</Text>
       </View>
 
-      {/* Add Savings */}
       <TextInput
         style={styles.input}
         placeholder="Enter amount to save"
@@ -154,14 +147,13 @@ export default function HajjTrackerScreen({ navigation }: any) {
       <Button title="Add Note" onPress={addNote} />
       <Button title="Clear Notes" onPress={clearNotes} color="#d63031" />
 
-      {/* Render Notes */}
       {notes.map((item, index) => (
         <View key={index} style={styles.noteItem}>
           <Text>{item}</Text>
         </View>
       ))}
 
-      {/* ---------- Donation Box at the Bottom ---------- */}
+      {/* ---------- Donation Box ---------- */}
       <View style={{ marginVertical: 20 }}>
         <DonationBox />
       </View>
@@ -169,13 +161,20 @@ export default function HajjTrackerScreen({ navigation }: any) {
   );
 }
 
-// ---------- Styles ----------
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fdfdfd' },
-  backButton: { marginBottom: 10 },
-  backText: { fontSize: 18, color: '#0984e3' },
+  container: { flex: 1, padding: 20, backgroundColor: '#E0F7FA' }, // ✅ light consistent background
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  backButton: { marginRight: 10 },
+  topBarText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
   sectionTitle: { fontSize: 22, fontWeight: 'bold', marginTop: 20, marginBottom: 10 },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 8 },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 8, backgroundColor: '#fff' },
   noteItem: { padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' },
   box: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 },
   progressText: { textAlign: 'center', marginTop: 5, fontWeight: 'bold' },

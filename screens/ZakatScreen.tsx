@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome5"; // ✅ Back arrow
 import DonationBox from "../components/DonationBox";
 
 const ZakatScreen = () => {
@@ -25,7 +26,7 @@ const ZakatScreen = () => {
   const [business, setBusiness] = useState("");
   const [zakat, setZakat] = useState<number | null>(null);
 
-  // Load saved data on mount
+  // Load saved data
   useEffect(() => {
     (async () => {
       try {
@@ -37,7 +38,6 @@ const ZakatScreen = () => {
             AsyncStorage.getItem("zakatBusiness"),
             AsyncStorage.getItem("zakatResult"),
           ]);
-
         if (savedCash) setCash(savedCash);
         if (savedGold) setGold(savedGold);
         if (savedSilver) setSilver(savedSilver);
@@ -49,7 +49,11 @@ const ZakatScreen = () => {
     })();
   }, []);
 
-  const handleChange = async (setter: React.Dispatch<React.SetStateAction<string>>, key: string, value: string) => {
+  const handleChange = async (
+    setter: React.Dispatch<React.SetStateAction<string>>,
+    key: string,
+    value: string
+  ) => {
     setter(value);
     try {
       await AsyncStorage.setItem(key, value);
@@ -81,36 +85,74 @@ const ZakatScreen = () => {
   };
 
   const clearAll = async () => {
-    setCash(""); setGold(""); setSilver(""); setBusiness(""); setZakat(null);
+    setCash("");
+    setGold("");
+    setSilver("");
+    setBusiness("");
+    setZakat(null);
     try {
-      await AsyncStorage.multiRemove(["zakatCash", "zakatGold", "zakatSilver", "zakatBusiness", "zakatResult"]);
+      await AsyncStorage.multiRemove([
+        "zakatCash",
+        "zakatGold",
+        "zakatSilver",
+        "zakatBusiness",
+        "zakatResult",
+      ]);
     } catch (err) {
       console.log("Error clearing AsyncStorage:", err);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
-      <LinearGradient colors={["#0984e3", "#74b9ff"]} style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+    <SafeAreaView style={styles.container}>
+      {/* 🔹 Gradient Top Bar with Back Icon */}
+      <LinearGradient colors={["#0984e3", "#74b9ff"]} style={styles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Zakat Calculator</Text>
+        <Text style={styles.topBarText}>Zakat Calculator</Text>
       </LinearGradient>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Text style={styles.label}>💵 Cash Amount</Text>
-          <TextInput style={styles.input} placeholder="Enter cash amount" keyboardType="numeric" value={cash} onChangeText={text => handleChange(setCash, "zakatCash", text)} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter cash amount"
+            keyboardType="numeric"
+            value={cash}
+            onChangeText={(text) => handleChange(setCash, "zakatCash", text)}
+          />
 
           <Text style={styles.label}>🥇 Gold Value</Text>
-          <TextInput style={styles.input} placeholder="Enter gold value" keyboardType="numeric" value={gold} onChangeText={text => handleChange(setGold, "zakatGold", text)} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter gold value"
+            keyboardType="numeric"
+            value={gold}
+            onChangeText={(text) => handleChange(setGold, "zakatGold", text)}
+          />
 
           <Text style={styles.label}>🥈 Silver Value</Text>
-          <TextInput style={styles.input} placeholder="Enter silver value" keyboardType="numeric" value={silver} onChangeText={text => handleChange(setSilver, "zakatSilver", text)} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter silver value"
+            keyboardType="numeric"
+            value={silver}
+            onChangeText={(text) => handleChange(setSilver, "zakatSilver", text)}
+          />
 
           <Text style={styles.label}>🏢 Business Assets</Text>
-          <TextInput style={styles.input} placeholder="Enter business value" keyboardType="numeric" value={business} onChangeText={text => handleChange(setBusiness, "zakatBusiness", text)} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter business value"
+            keyboardType="numeric"
+            value={business}
+            onChangeText={(text) => handleChange(setBusiness, "zakatBusiness", text)}
+          />
 
           <TouchableOpacity onPress={calculateZakat}>
             <LinearGradient colors={["#0984e3", "#74b9ff"]} style={styles.button}>
@@ -119,7 +161,7 @@ const ZakatScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={clearAll} style={{ alignSelf: "flex-end", marginTop: 10 }}>
-            <LinearGradient colors={["#d63031", "#ff7675"]} style={{ paddingVertical: 8, paddingHorizontal: 15, borderRadius: 8 }}>
+            <LinearGradient colors={["#d63031", "#ff7675"]} style={styles.clearButton}>
               <Text style={{ color: "#fff", fontWeight: "bold" }}>Clear</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -138,14 +180,31 @@ const ZakatScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  header: { paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", elevation: 4 },
-  backArrow: { fontSize: 40, fontWeight: "bold", color: "#fff", marginRight: 15 },
-  headerTitle: { color: "#fff", fontSize: 20, fontWeight: "bold" },
-  container: { flexGrow: 1, padding: 20 },
+  container: { flex: 1, backgroundColor: "#E0F7FA" }, // ✅ Light cyan background
+  topBar: {
+    paddingTop: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 4,
+  },
+  backButton: { marginRight: 10 },
+  topBarText: { color: "#fff", fontSize: 20, fontWeight: "bold" },
+  scrollContainer: { padding: 20 },
   label: { fontSize: 16, fontWeight: "600", marginBottom: 8, marginTop: 20 },
-  input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 10, padding: 14, fontSize: 16, backgroundColor: "#fff", elevation: 2 },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 16,
+    backgroundColor: "#fff",
+    elevation: 2,
+  },
   button: { padding: 15, borderRadius: 10, marginTop: 30, alignItems: "center", elevation: 3 },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  clearButton: { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 8 },
   resultBox: { marginTop: 30, padding: 20, borderRadius: 12, backgroundColor: "#d4edda", elevation: 3 },
   resultText: { fontSize: 20, color: "#155724", textAlign: "center", fontWeight: "bold" },
 });

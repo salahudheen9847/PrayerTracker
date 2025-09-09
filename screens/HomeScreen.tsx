@@ -10,6 +10,7 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 type RootStackParamList = {
   Home: undefined;
@@ -19,7 +20,7 @@ type RootStackParamList = {
   LiabilityPayable: undefined;
   Zakat: undefined;
   HajjTracker: undefined;
-  UmrahTracker: undefined; // ✅ Add UmrahTracker
+  UmrahTracker: undefined;
 };
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -31,15 +32,17 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-// Gradient Button (square style)
+// Gradient Button with Icon
 const GradientButton = ({
   onPress,
   colors,
   title,
+  icon,
 }: {
   onPress: () => void;
   colors: string[];
   title: string;
+  icon: string;
 }) => {
   const scale = new Animated.Value(1);
 
@@ -65,6 +68,7 @@ const GradientButton = ({
     >
       <Animated.View style={{ transform: [{ scale }] }}>
         <LinearGradient colors={colors} style={styles.squareButton}>
+          <Icon name={icon} size={28} color="#fff" style={{ marginBottom: 6 }} />
           <Text style={styles.squareButtonText}>{title}</Text>
         </LinearGradient>
       </Animated.View>
@@ -74,62 +78,73 @@ const GradientButton = ({
 
 export default function HomeScreen({ navigation }: Props) {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#6c5ce7" />
+    <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="#3498db" // blue background for status bar
+          translucent={false}
+        />
 
-      {/* Top Gradient Bar with Heading */}
-      <LinearGradient colors={["#6c5ce7", "#341f97"]} style={styles.topBar}>
-        <Text style={styles.header}>Islamic Tracker</Text>
-      </LinearGradient>
+        {/* Top Gradient Bar with Heading */}
+        <LinearGradient colors={["#6c5ce7", "#341f97"]} style={styles.topBar}>
+          <Text style={styles.header}>Islamic Tracker</Text>
+        </LinearGradient>
 
-      {/* Buttons */}
-      <View style={styles.buttonGrid}>
-        <GradientButton
-          onPress={() => navigation.navigate("PrayerTracker")}
-          colors={["#6c5ce7", "#341f97"]}
-          title="Prayer"
-        />
-        <GradientButton
-          onPress={() => navigation.navigate("FastTracker")}
-          colors={["#00b894", "#019267"]}
-          title="Fast"
-        />
-        <GradientButton
-          onPress={() => navigation.navigate("AssetReceivable")}
-          colors={["#fdcb6e", "#e17055"]}
-          title="Assets"
-        />
-        <GradientButton
-          onPress={() => navigation.navigate("LiabilityPayable")}
-          colors={["#d63031", "#e84393"]}
-          title="Liabilities"
-        />
-        <GradientButton
-          onPress={() => navigation.navigate("Zakat")}
-          colors={["#0984e3", "#74b9ff"]}
-          title="Zakat"
-        />
-        <GradientButton
-          onPress={() => navigation.navigate("HajjTracker")}
-          colors={["#f39c12", "#e67e22"]}
-          title="Hajj Tracker"
-        />
-        {/* ✅ Umrah Tracker Button */}
-        <GradientButton
-          onPress={() => navigation.navigate("UmrahTracker")}
-          colors={["#8e44ad", "#9b59b6"]}
-          title="Umrah Tracker"
-        />
-      </View>
-    </SafeAreaView>
+        {/* Buttons */}
+        <View style={styles.buttonGrid}>
+          <GradientButton
+            onPress={() => navigation.navigate("PrayerTracker")}
+            colors={["#6c5ce7", "#341f97"]}
+            title="Prayer"
+            icon="mosque"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("FastTracker")}
+            colors={["#00b894", "#019267"]}
+            title="Fast"
+            icon="utensils"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("AssetReceivable")}
+            colors={["#fdcb6e", "#e17055"]}
+            title="Assets"
+            icon="coins"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("LiabilityPayable")}
+            colors={["#d63031", "#e84393"]}
+            title="Liabilities"
+            icon="balance-scale"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("Zakat")}
+            colors={["#0984e3", "#74b9ff"]}
+            title="Zakat"
+            icon="hand-holding-usd"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("HajjTracker")}
+            colors={["#f39c12", "#e67e22"]}
+            title="Hajj"
+            icon="kaaba"
+          />
+          <GradientButton
+            onPress={() => navigation.navigate("UmrahTracker")}
+            colors={["#8e44ad", "#9b59b6"]}
+            title="Umrah"
+            icon="kaaba"
+          />
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f6fa",
-    alignItems: "center",
+    backgroundColor: "#B0E0E6", // blue background
   },
   topBar: {
     width: "100%",
@@ -154,8 +169,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   squareButton: {
-    width: 110,
-    height: 110,
+    width: 100,
+    height: 100,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -167,7 +182,7 @@ const styles = StyleSheet.create({
   },
   squareButtonText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     textAlign: "center",
   },

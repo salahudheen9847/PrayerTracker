@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome5"; // ✅ Back arrow icon
 import DonationBox from "../components/DonationBox";
 
 type FinanceItem = { name?: string; amount?: number };
@@ -102,8 +103,9 @@ export default function LiabilityPayableScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
+        {/* 🔹 Back Arrow Icon */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backArrow}>←</Text>
+          <Icon name="arrow-left" size={28} color="#0984e3" />
         </TouchableOpacity>
 
         <Text style={styles.header}>Liability & Payable</Text>
@@ -138,9 +140,8 @@ export default function LiabilityPayableScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 16, backgroundColor: "#f5f6fa" },
+  container: { flex: 1, paddingHorizontal: 16, backgroundColor: "#E0F7FA" }, // ✅ Light cyan background
   backButton: { marginBottom: 16, padding: 8, alignSelf: "flex-start" },
-  backArrow: { fontSize: 40, fontWeight: "bold", color: "#0984e3" },
   header: { fontSize: 28, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
   inputContainer: { flexDirection: "row", marginBottom: 20, alignItems: "center" },
   input: { flex: 1, borderWidth: 1, borderColor: "#ccc", padding: 10, marginRight: 8, borderRadius: 8, backgroundColor: "#fff" },
